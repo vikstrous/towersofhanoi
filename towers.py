@@ -10,21 +10,24 @@ for i in range(n):
 for i in range(k):
 	stacks[i].reverse() 
 
-def moveToBottom(disk, src, dst):
-	if stacks[src].index(disk) == len(stacks[src])-1 and len(stacks[dst]) ==0:
-		stacks[dst].append(stacks[src].pop())
+def moveToBottom(disk, src, dst, moves):	
+	if stacks[src].index(disk) == len(stacks[src])-1 and (len(stacks[dst]) ==0 or disk < stacks[dst(-1)]):
+		moves.append((src, dst))
+		stacks[dst].append(stacks[src].pop())	
+		return moves	
 	else:
 		if len(stacks[dst]) == 0: 
 			nextIndex = stacks[src].index(disk) + 1
 			nextNum = stacks[src][nextIndex]
 			destinations = list(set(range(k)) - set([src, dst]))
-			moveToBottom(nextNum, src, destinations[0])
-
-			moveToBottom(disk, src, dst)
+			moves = moveToBottom(nextNum, src, destinations[0], moves)
+		 
+			moves = moveToBottom(disk, src, dst, moves)
+			return moves
 
 		else:	 
 			raise Exception( "Can't move %s %s %s index: %s" % (disk, src, dst, stacks[src].index(disk)))
 
 print stacks
-moveToBottom(disk = 2, src = 0, dst = 2)
+print moveToBottom(disk = 2, src = 0, dst = 2, moves = [])
 print stacks 
